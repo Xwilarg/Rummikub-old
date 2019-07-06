@@ -46,6 +46,7 @@ public class TileManager : MonoBehaviour
                     tm.color = Color.yellow;
                     break;
             }
+            go.name = tv.color.ToString() + " " + tv.value;
             support.AddTile(go.GetComponent<Tile>());
         }
     }

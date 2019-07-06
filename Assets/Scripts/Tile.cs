@@ -57,4 +57,11 @@ public class Tile : MonoBehaviour
 
     public void SetDestination(Vector3 dest) // The tile save it position on the support
         => destination = dest;
+
+    // Only when on board
+
+    private void OnMouseDown()
+        => PressTile();
+    private void OnMouseUp()
+        => ReleaseTile();
 }
