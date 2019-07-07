@@ -95,16 +95,24 @@ public class Support : MonoBehaviour
             }
         // TODO: For now the program iterate in all tiles everytimes we move it
         // The tile can probably keep track if it's on the board or not, instead
-        if (oldX == -1 && oldY == -1)
+        if (oldX == -1 && oldY == -1 && newX == -1 && newY == -1)
+        {
+            t.GetComponent<BoxCollider2D>().enabled = true;
             UpdateBoardPosition(t);
+        }
         else if (currentHover == null)
+        {
+            t.GetComponent<BoxCollider2D>().enabled = true;
             MoveBoardTile(t, oldX, oldY);
+        }
         else
             MoveSupportTile(t, oldX, oldY, newX, newY);
     }
 
     private void UpdateBoardPosition(Tile t)
     {
+        if (t.transform.position.y < supportYLimit)
+            return;
         t.SetDestination(t.transform.position);
         // Set position properly if there are tiles next to the current one
         foreach (float f in new[] { -1f, 1f })
@@ -134,9 +142,17 @@ public class Support : MonoBehaviour
     {
         // Swap 2 tiles
         Tile tmp = supportTiles[newX, newY];
+        if (oldX == -1 && tmp != null) // Trying to move a board tile on an already busy emplacement
+        {
+            t.GetComponent<BoxCollider2D>().enabled = true;
+            return;
+        }
         supportTiles[newX, newY] = t;
         t.SetDestination(backgroundTiles[newX, newY].transform.position);
-        supportTiles[oldX, oldY] = tmp;
+        if (oldX == -1) // If old pos is -1, that means the tile was on the board
+            board.Remove(t);
+        else
+            supportTiles[oldX, oldY] = tmp;
         if (tmp != null)
         {
             tmp.SetDestination(backgroundTiles[oldX, oldY].transform.position);

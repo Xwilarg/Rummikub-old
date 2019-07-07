@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(TileManager))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class Tile : MonoBehaviour
 {
     private TileValue tileValue;
@@ -11,6 +12,7 @@ public class Tile : MonoBehaviour
     private bool followMouse;
     private SpriteRenderer sr;
     private MeshRenderer childMr;
+    private BoxCollider2D bc;
     private Support support;
 
     public void SetSupport(Support newSupport)
@@ -21,6 +23,7 @@ public class Tile : MonoBehaviour
         followMouse = false;
         sr = GetComponent<SpriteRenderer>();
         childMr = GetComponentInChildren<MeshRenderer>();
+        bc = GetComponent<BoxCollider2D>();
     }
 
     private void Update()
@@ -47,6 +50,7 @@ public class Tile : MonoBehaviour
         followMouse = true;
         SetOnTopLayer();
         support.ResetHover();
+        bc.enabled = false;
     }
 
     public void ReleaseTile()
