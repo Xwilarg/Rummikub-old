@@ -12,8 +12,14 @@
     {
         value = cvalue;
         color = ccolor;
+        id = currId++;
     }
+
+    public bool IsSame(TileValue t)
+        => t.value == value && t.color == color;
 
     public int value; // 0: Joker
     public TileColor color;
+    private int id;
+    private static int currId = 0;
 }
