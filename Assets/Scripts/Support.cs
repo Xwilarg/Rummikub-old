@@ -96,11 +96,28 @@ public class Support : MonoBehaviour
         // TODO: For now the program iterate in all tiles everytimes we move it
         // The tile can probably keep track if it's on the board or not, instead
         if (oldX == -1 && oldY == -1)
-            t.SetDestination(t.transform.position);
+            UpdateBoardPosition(t);
         else if (currentHover == null)
             MoveBoardTile(t, oldX, oldY);
         else
             MoveSupportTile(t, oldX, oldY, newX, newY);
+    }
+
+    private void UpdateBoardPosition(Tile t)
+    {
+        t.SetDestination(t.transform.position);
+        // Set position properly if there are tiles next to the current one
+        foreach (float f in new[] { -1f, 1f })
+        {
+            RaycastHit2D hit = Physics2D.Raycast(
+                new Vector2(t.transform.position.x + (tileWidth / 2f + 0.0001f) * f, t.transform.position.y),
+                new Vector2(t.transform.position.x + (tileWidth / 2f + 0.0001f) * f + 100f * f, t.transform.position.y));
+            if (hit.distance > 0f && hit.distance < tileWidth / 2f)
+            {
+                t.SetDestination(hit.collider.transform.position + new Vector3(tileWidth * -f, 0f));
+                break;
+            }
+        }
     }
 
     private void MoveBoardTile(Tile t, int oldX, int oldY)
@@ -109,19 +126,8 @@ public class Support : MonoBehaviour
             return;
         board.Add(t);
         supportTiles[oldX, oldY] = null;
-        t.SetDestination(t.transform.position);
         t.GetComponent<BoxCollider2D>().enabled = true;
-        // Set position properly if there are tiles next to the current one
-        foreach (float f in new[] { -1f, 1f })
-        {
-            RaycastHit2D hit = Physics2D.Raycast(
-                new Vector2(t.transform.position.x + tileWidth * f, t.transform.position.y),
-                new Vector2(t.transform.position.x + (tileWidth + 1f) * f, t.transform.position.y));
-            if (hit.distance > 0f && hit.distance < tileWidth)
-                Debug.Log(hit.collider.name + " ; " + hit.distance);
-            Debug.DrawLine(new Vector2(t.transform.position.x + tileWidth * f, t.transform.position.y),
-                new Vector2(t.transform.position.x + (tileWidth + 1f) * f, t.transform.position.y), Color.red, 10000f);
-        }
+        UpdateBoardPosition(t);
     }
 
     private void MoveSupportTile(Tile t, int oldX, int oldY, int newX, int newY)
